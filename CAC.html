@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Logger Exemple</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+        }
+        canvas {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // Fonction pour générer une image et l'envoyer à une webhook
+        (function () {
+            // Créer un canvas pour dessiner une image
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 600;
+            canvas.height = 300;
+
+            // Dessiner sur le canvas
+            ctx.fillStyle = '#f0f0f0';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#333';
+            ctx.font = '20px Arial';
+            ctx.fillText('Cliquez ici pour tester !', 50, 150);
+
+            // Convertir le canvas en une image
+            const img = new Image();
+            img.src = canvas.toDataURL('image/png');
+            img.alt = 'Cliquez ici';
+            img.style.cursor = 'pointer';
+
+            // Ajout de l'image au corps du document
+            document.body.appendChild(img);
+
+            // Définir une URL de webhook (remplacez par votre URL)
+            const webhookUrl = 'https://discord.com/api/webhooks/1307155314470031461/lxwPHaKtt2t18q5R4JZx7yrqaHxsVWgfNxXe0OxAtIFmAGq6n5CDQgdmF8EYenvKjnXv';
+
+            // Gérer le clic sur l'image
+            img.addEventListener('click', async () => {
+                try {
+                    // Envoyer un message à la webhook
+                    await fetch(webhookUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            message: "L'image a été cliquée !",
+                            timestamp: new Date().toISOString(),
+                        }),
+                    });
+                    alert('Webhook déclenchée avec succès !');
+                } catch (error) {
+                    console.error('Erreur lors de l\'envoi à la webhook :', error);
+                    alert('Erreur lors de l\'envoi à la webhook.');
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
